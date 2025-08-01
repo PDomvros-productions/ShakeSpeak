@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShakeSpeak - The Complete App</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- General Setup & Variables --- */
+        :root {
+            --burgundy: #800020;
+            --gold: #FFD700;
+            --silver: #C0C0C0;
+            --bronze: #CD7F32;
+            --parchment: #FDF5E6;
+            --charcoal: #36454F;
+        }
+        html { box-sizing: border-box; font-size: 16px; }
+        *, *:before, *:after { box-sizing: inherit; }
+        body {
+            font-family: 'Lato', sans-serif;
+            margin: 0;
+            background-color: var(--charcoal);
+            color: var(--charcoal);
+        }
+        .page {
+            display: none;
+            flex-direction: column;
+            flex-grow: 1;
+            width: 100%;
+            min-height: 100vh;
+        }
+        .page.active { display: flex; }
+        .container {
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+            flex-grow: 1;
+        }
+        .hidden { display: none; }
+
+        /* --- Headers & Footer --- */
+        .page-header {
+            background-color: var(--burgundy);
+            color: white;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .page-header h1 { margin: 0; font-size: 1.5rem; }
+        .home-button {
+            background-color: var(--gold);
+            color: var(--charcoal);
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        footer {
+            background-color: var(--charcoal);
+            color: var(--parchment);
+            text-align: center;
+            padding: 1rem;
+            font-size: 0.9rem;
+        }
+
+        /* --- Intro & Hub Pages --- */
+        #intro-page { background-color: var(--parchment); }
+        #intro-page .container { text-align: center; }
+        .intro-image {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            border: 4px solid var(--burgundy);
+            margin-bottom: 1rem;
+        }
+        .letter {
+            font-family: 'Great Vibes', cursive;
+            font-size: 2rem;
+            line-height: 1.5;
+            text-align: left;
+            margin-bottom: 1rem;
+        }
+        .credit { font-style: italic; margin-bottom: 2rem; }
+        .action-button {
+            display: inline-block;
+            background-color: var(--burgundy);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+        }
+        #hub-page {
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background-image: url('1.jpg');
+            background-size: cover;
+            background-position: center;
+        }
+        .nav-menu {
+            background-color: rgba(0, 0, 0, 0.75);
+            padding: 1.5rem;
+            border-radius: 10px;
+            border: 2px solid var(--gold);
+            width: 90%;
+            max-width: 500px;
+        }
+        .nav-menu h1 { color: var(--gold); margin-top: 0; font-size: 2rem; }
+        .nav-button { padding: 1rem; margin: 0.8rem 0; font-size: 1.1rem; }
+
+        /* --- Scriptorium Page (Accordion) --- */
+        #scriptorium-page { background-color: var(--parchment); }
+        .accordion-button {
+            background-color: white; color: var(--charcoal); cursor: pointer;
+            padding: 18px; width: 100%; border: 1px solid var(--burgundy);
+            border-radius: 5px; text-align: left; outline: none;
+            font-size: 1.2rem; font-weight: bold; transition: background-color 0.3s;
+            margin-top: 0.5rem; position: relative;
+        }
+        .accordion-button:hover, .accordion-button.active { background-color: #f1f1f1; }
+        .accordion-button:after {
+            content: '+'; font-size: 1.5rem; color: var(--burgundy);
+            position: absolute; right: 18px; top: 50%; transform: translateY(-50%);
+        }
+        .accordion-button.active:after { content: "−"; }
+        .accordion-content {
+            padding: 0 18px; background-color: white; max-height: 0;
+            overflow: hidden; transition: max-height 0.3s ease-out;
+            border: 1px solid var(--burgundy); border-top: none; border-radius: 0 0 5px 5px;
+        }
+        .phrase-scroll { padding: 1.5rem 0; border-bottom: 1px solid #ddd; }
+        .phrase-scroll:last-child { border-bottom: none; }
+        .phrase-scroll h3 { font-size: 1.3rem; color: var(--burgundy); margin-top: 0; }
+        .phrase-scroll ul { padding-left: 20px; margin: 0.5rem 0; list-style-type: none;}
+        .phrase-scroll .excerpt {
+            font-style: italic; background-color: #f9f9f9;
+            padding: 1rem; border-left: 4px solid var(--gold); margin-top: 1rem;
+        }
+
+        /* --- Stage Page (Quiz Options) --- */
+        #stage-page { background-color: var(--parchment); }
+        #stage-page .container { display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 1rem; }
+        .quiz-option {
+            background-color: white; border: 3px solid var(--burgundy); border-radius: 10px;
+            padding: 1rem; width: 90%; max-width: 500px; text-align: center;
+            text-decoration: none; color: var(--charcoal); cursor: pointer;
+        }
+        .quiz-option h2 { font-size: 1.5rem; margin-top: 0; color: var(--burgundy); }
+        .quiz-option p { margin-bottom: 0; }
+
+        /* --- Quiz Page --- */
+        #quiz-page { background-color: var(--parchment); }
+        #quiz-page .container { display: flex; justify-content: center; align-items: center; }
+        .quiz-box { padding: 1.5rem; width: 100%; max-width: 600px; background: white; border-radius: 10px; }
+        #quiz-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+        #quiz-title { font-size: 1.5rem; font-weight: bold; color: var(--burgundy); }
+        #timer-display { font-size: 1.5rem; font-weight: bold; }
+        .quiz-question { font-size: 1.2rem; font-weight: bold; margin-bottom: 1.5rem; }
+        #quiz-answers button { width: 100%; margin-bottom: 0.5rem; }
+        #quiz-feedback { margin-top: 1rem; font-weight: bold; min-height: 1.2em; text-align: center; }
+        #quiz-results { text-align: center; }
+
+        /* --- Gallery Page (Medallions) --- */
+        #gallery-page { background-color: var(--parchment); }
+        #gallery-page .container { text-align: center; }
+        .medallion-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 1rem; }
+        .medallion {
+            background: white; border-radius: 10px; padding: 1rem;
+            border: 4px solid #ccc; transition: all 0.3s;
+        }
+        .medallion.unearned { opacity: 0.5; filter: grayscale(100%); }
+        .medallion.bronze { border-color: var(--bronze); }
+        .medallion.silver { border-color: var(--silver); }
+        .medallion.gold { border-color: var(--gold); box-shadow: 0 0 15px var(--gold); }
+        .medallion-image {
+            width: 80px; height: 80px; border-radius: 50%; object-fit: cover;
+            background-color: #eee; margin-bottom: 0.5rem;
+        }
+        .medallion-name { font-weight: bold; font-size: 1rem; }
+        .medallion-tier { font-style: italic; font-size: 0.9rem; min-height: 1.1em; }
+
+        /* --- Media Queries for Larger Screens --- */
+        @media (min-width: 768px) {
+            .container { padding: 2rem; }
+            .page-header h1 { font-size: 2rem; }
+            .home-button { padding: 10px 20px; font-size: 1rem; }
+            .intro-image { width: 250px; height: 250px; }
+            .letter { font-size: 2.2rem; }
+            .action-button, .nav-button { padding: 15px 30px; font-size: 1.2rem; }
+            .quiz-option { padding: 1.5rem; }
+            .quiz-option h2 { font-size: 2rem; }
+            .quiz-question { font-size: 1.5rem; }
+            .medallion-grid { grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="intro-page" class="page active">
+        <div class="container">
+            <img src="2.jpg" alt="Shakespeare" class="intro-image">
+            <div class="letter">
+                <p>Hark, aspiring player!</p>
+                <p>A greeting to thee. I am Will Shakespeare, and I welcome you to my famed Globe Theatre, where words weave worlds and stories take flight.</p>
+                <p>The play's the thing!</p>
+                <p class="signature">Your faithful servant,<br>William Shakespeare</p>
+            </div>
+            <p class="credit">Devised by Panagiotis Domvros, English and Drama Teacher</p>
+            <a data-target="hub-page" class="action-button">Enter the Globe</a>
+        </div>
+        <footer>✨✍️ Devised by Panagiotis Domvros, English and Drama Teacher, All Rights Reserved ✍️✨</footer>
+    </div>
+
+    <div id="hub-page" class="page">
+        <div class="nav-menu">
+            <h1>The Globe</h1>
+            <a data-target="scriptorium-page" class="nav-button action-button">The Scriptorium (Learn)</a>
+            <a data-target="stage-page" class="nav-button action-button">The Stage (Practise)</a>
+            <a data-target="gallery-page" class="nav-button action-button">The Gallery (Thy Progress)</a>
+        </div>
+        <footer>✨✍️ Devised by Panagiotis Domvros, English and Drama Teacher, All Rights Reserved ✍️✨</footer>
+    </div>
+
+    <div id="scriptorium-page" class="page">
+        <header class="page-header"><h1>The Scriptorium</h1><a data-target="hub-page" class="home-button">Home</a></header>
+        <main class="container" id="scriptorium-content"></main>
+        <footer>✨✍️ Devised by Panagiotis Domvros, English and Drama Teacher, All Rights Reserved ✍️✨</footer>
+    </div>
+
+    <div id="stage-page" class="page">
+        <header class="page-header"><h1>The Stage</h1><a data-target="hub-page" class="home-button">Home</a></header>
+        <main class="container">
+            <a data-target="quiz-page" data-mode="rehearsal" class="quiz-option">
+                <h2>Rehearsal</h2>
+                <p>A short, 5-question quiz to learn the ropes.</p>
+            </a>
+            <a data-target="quiz-page" data-mode="dressRehearsal" class="quiz-option">
+                <h2>Dress Rehearsal</h2>
+                <p>A full, untimed quiz on all phrases. Accuracy is key!</p>
+            </a>
+            <a data-target="quiz-page" data-mode="openingNight" class="quiz-option">
+                <h2>Opening Night!</h2>
+                <p>The ultimate timed challenge of speed and knowledge.</p>
+            </a>
+        </main>
+        <footer>✨✍️ Devised by Panagiotis Domvros, English and Drama Teacher, All Rights Reserved ✍️✨</footer>
+    </div>
+    
+    <div id="quiz-page" class="page">
+         <header class="page-header"><h1>On Stage</h1><a data-target="hub-page" class="home-button">Home</a></header>
+        <main class="container">
+            <div class="quiz-box">
+                <div id="quiz-header">
+                    <div id="quiz-title"></div>
+                    <div id="timer-display"></div>
+                </div>
+                <div id="quiz-content">
+                    <div id="quiz-question" class="quiz-question"></div>
+                    <div id="quiz-answers"></div>
+                    <div id="quiz-feedback"></div>
+                </div>
+                 <div id="quiz-results" class="hidden">
+                    <h2 id="results-title"></h2>
+                    <p id="results-text"></p>
+                    <a data-target="stage-page" class="action-button">Return to The Stage</a>
+                </div>
+            </div>
+        </main>
+        <footer>✨✍️ Devised by Panagiotis Domvros, English and Drama Teacher, All Rights Reserved ✍️✨</footer>
+    </div>
+
+    <div id="gallery-page" class="page">
+        <header class="page-header"><h1>The Gallery</h1><a data-target="hub-page" class="home-button">Home</a></header>
+        <main class="container">
+            <h2>Thy Medallions</h2>
+            <div class="medallion-grid">
+                <div id="breakerOfIce" class="medallion unearned">
+                    <img src="3.jpg" alt="Breaker of Ice Medallion" class="medallion-image">
+                    <div class="medallion-name">Breaker of Ice</div>
+                    <div class="medallion-tier">Unearned</div>
+                </div>
+                <div id="heartOfGold" class="medallion unearned">
+                    <img src="4.jpg" alt="Heart of Gold Medallion" class="medallion-image">
+                    <div class="medallion-name">Heart of Gold</div>
+                    <div class="medallion-tier">Unearned</div>
+                </div>
+                <div id="methodInMadness" class="medallion unearned">
+                    <img src="5.jpg" alt="Method in the Madness Medallion" class="medallion-image">
+                    <div class="medallion-name">Method in the Madness</div>
+                    <div class="medallion-tier">Unearned</div>
+                </div>
+            </div>
+        </main>
+        <footer>✨✍️ Devised by Panagiotis Domvros, English and Drama Teacher, All Rights Reserved ✍️✨</footer>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+
+        const phrasesData = [
+            { play: "Macbeth", phrase: "A sorry sight", modern: "An unpleasant or regrettable view or scene.", example: "The aftermath of the party was a sorry sight.", originalMeaning: "The sight of his hands, stained with King Duncan's blood.", excerpt: "This is a sorry sight.", modernExcerpt: "This is an unpleasant sight." },
+            { play: "Macbeth", phrase: "The be-all and the end-all", modern: "The ultimate, most important, or conclusive thing.", example: "Winning the championship was the be-all and the end-all for the team.", originalMeaning: "The ultimate goal or a finality.", excerpt: "...that but this blow / Might be the be-all and the end-all here...", modernExcerpt: "...so that this one strike might be the ultimate and final act here..." },
+            { play: "Macbeth", phrase: "Come what, come may", modern: "No matter what happens.", example: "I'll be there for you, come what, come may.", originalMeaning: "To accept whatever the future holds.", excerpt: "Come what, come may...", modernExcerpt: "No matter what happens..." },
+            { play: "Macbeth", phrase: "Knock knock! Who's there?", modern: "The opening of a common riddle or joke.", example: "Knock knock! Who's there? ... Interrupting cow.", originalMeaning: "A porter at the gate imagines he is the doorkeeper of hell.", excerpt: "Knock, knock! Who's there, i' th' name of Beelzebub?", modernExcerpt: "Knock, knock! Who's there, in the name of the devil?" },
+            { play: "Macbeth", phrase: "One fell swoop", modern: "In a single, quick, and decisive action.", example: "He knocked over all the dominoes in one fell swoop.", originalMeaning: "A savage or deadly pounce, like that of a bird of prey.", excerpt: "At one fell swoop?", modernExcerpt: "...in one swift, terrible act?" },
+            { play: "Romeo and Juliet", phrase: "A wild-goose chase", modern: "A pointless, hopeless, or long and difficult pursuit.", example: "I spent all day on a wild-goose chase looking for that lost file.", originalMeaning: "A chaotic, disorderly horse race.", excerpt: "Nay, if our wits run the wild-goose chase, I am done...", modernExcerpt: "No, if our wits go on a wild-goose chase, I'm out of here..." },
+            { play: "The Taming of the Shrew", phrase: "All of a sudden", modern: "Suddenly; without warning.", example: "All of a sudden, the lights went out.", originalMeaning: "A phrase to denote an abrupt action or event.", excerpt: "Then, all of a sudden, I see her.", modernExcerpt: "Then, all of a sudden, I see her." },
+            { play: "The Taming of the Shrew", phrase: "Break the ice", modern: "To do or say something to relieve tension or awkwardness in a social situation.", example: "To break the ice, he told a funny story.", originalMeaning: "Breaking the ice on a frozen river to allow boats to pass.", excerpt: "And if you break the ice, and do this feat...", modernExcerpt: "And if you can break the ice and succeed in this task..." },
+            { play: "The Merchant of Venice", phrase: "All that glitters is not gold", modern: "An attractive appearance can be deceptive.", example: "He seemed like a good guy, but all that glitters is not gold.", originalMeaning: 'The original wording was "glisters," an archaic word for "glitters."', excerpt: "All that glisters is not gold...", modernExcerpt: "All that glitters is not gold..." },
+            { play: "The Merchant of Venice", phrase: "With bated breath", modern: "In a state of anxious anticipation.", example: "We waited with bated breath for the test results.", originalMeaning: "'Bated' is a shortened form of 'abated,' meaning to hold your breath.", excerpt: "With bated breath and whispering humbleness...", modernExcerpt: "holding my breath and with quiet humility..." },
+            { play: "The Merchant of Venice", phrase: "Love is blind", modern: "A person in love cannot see the faults of the person they love.", example: "She can't see how selfish he is. I guess love is blind.", originalMeaning: "A common theme, but Shakespeare's phrasing is what became the enduring idiom.", excerpt: "But love is blind and lovers cannot see...", modernExcerpt: "But love is blind and people in love cannot see..." },
+            { play: "The Merchant of Venice", phrase: "Own flesh and blood", modern: "One's immediate family.", example: "He would betray his own flesh and blood.", originalMeaning: "Shylock's expression of connection to his runaway daughter.", excerpt: "My own flesh and blood to rebel!", modernExcerpt: "My own family to betray me!" },
+            { play: "The Merchant of Venice", phrase: "Truth will out", modern: "The truth will eventually be revealed.", example: "He tried to cover up the scandal, but truth will out.", originalMeaning: "The idea that truth, like murder, cannot be hidden forever.", excerpt: "...in the end truth will out.", modernExcerpt: "...in the end the truth will come out." },
+            { play: "Henry VI, Part II", phrase: "Dead as a doornail", modern: "Completely and utterly dead or useless.", example: "The old computer is dead as a doornail.", originalMeaning: "A doornail was hammered so hard it was 'dead' and couldn't be used again.", excerpt: "...dead as a doornail.", modernExcerpt: "...as dead as a doornail." },
+            { play: "Henry VI, Part II", phrase: "Mum's the word", modern: "Keep quiet; don't say anything.", example: "About the party—mum's the word!", originalMeaning: "'Mum' is an onomatopoeic word for the sound of someone with their mouth shut.", excerpt: "Mum is the word...", modernExcerpt: "Keep quiet..." },
+            { play: "Henry IV, Part II", phrase: "Eaten out of house and home", modern: "To have consumed all of someone's food.", example: "My son's friends ate me out of house and home.", originalMeaning: "Refers to Falstaff consuming all the food and money of a tavern owner.", excerpt: "He hath eaten me out of house and home...", modernExcerpt: "He has eaten all my food and used up all my resources..." },
+            { play: "Henry VI, Part I", phrase: "Faint-hearted", modern: "Lacking courage; timid.", example: "He was too faint-hearted to ask her out.", originalMeaning: "Describes someone who is timid and lacks courage.", excerpt: "Faint-hearted Woodvile, prizest him 'fore me?", modernExcerpt: "Timid Woodvile, do you value him more than me?" },
+            { play: "Othello", phrase: "Foregone conclusion", modern: "A result that is inevitable.", example: "That she would win was a foregone conclusion.", originalMeaning: "A dream that foreshadows an outcome, making it seem predetermined.", excerpt: "But this is not a foregone conclusion.", modernExcerpt: "But this is not a conclusion that has been decided in advance." },
+            { play: "Othello", phrase: "Neither here nor there", modern: "Something that is irrelevant.", example: "His opinion is neither here nor there.", originalMeaning: "A phrase used to describe something irrelevant or nonsensical.", excerpt: "Thy words are neither here nor there.", modernExcerpt: "Your words don't make any sense." },
+            { play: "Othello", phrase: "Wear your heart on your sleeve", modern: "To openly display one's emotions.", example: "She wears her heart on her sleeve.", originalMeaning: "Iago uses it to express that he is deceitful and does not reveal his true feelings.", excerpt: "But I will wear my heart upon my sleeve...", modernExcerpt: "But I will show my true feelings for all to see..." },
+            { play: "Henry VIII", phrase: "For goodness’ sake", modern: "An exclamation of exasperation.", example: "For goodness' sake, stop that noise!", originalMeaning: "A polite and common interjection.", excerpt: "For goodness' sake, have him away!", modernExcerpt: "For goodness' sake, take him away!" },
+            { play: "King Lear", phrase: "Full circle", modern: "To return to a starting point.", example: "His career has come full circle.", originalMeaning: "A complete reversal of fortune.", excerpt: "The wheel is come full circle: I am here.", modernExcerpt: "My destiny has come full circle: I am back where I started." },
+            { play: "Henry IV, Part I", phrase: "Give the devil his due", modern: "To acknowledge the good qualities of a disliked person.", example: "I don't like him, but to give the devil his due, he is a hard worker.", originalMeaning: "To give credit where it's due, even to an opponent.", excerpt: "...to give the devil his due...", modernExcerpt: "...to give him the credit he deserves..." },
+            { play: "Henry IV, Part I", phrase: "Send him packing", modern: "To dismiss someone abruptly.", example: "After he was late again, the boss sent him packing.", originalMeaning: "To send someone away in a hurry, with their 'packs' or belongings.", excerpt: "...'Faith, and I'll send him packing.", modernExcerpt: "...Indeed, I'll send him away." },
+            { play: "Henry V", phrase: "A heart of gold", modern: "A kind, generous, and compassionate nature.", example: "She has a heart of gold.", originalMeaning: "A compliment meaning someone is noble and generous.", excerpt: "The king's a bawcock, and a heart of gold...", modernExcerpt: "The king is a brave fellow and has a heart of gold..." },
+            { play: "The Tempest", phrase: "In a pickle", modern: "In a difficult or tricky situation.", example: "I lost my wallet and keys, now I'm in a pickle.", originalMeaning: "A 'pickle' referred to a sticky, messy situation, much like a pickling brine.", excerpt: "How camest thou in this pickle?", modernExcerpt: "How did you get into this mess?" },
+            { play: "The Tempest", phrase: "Melted into thin air", modern: "To disappear completely.", example: "The rabbit melted into thin air.", originalMeaning: "Prospero describes how his spirits have disappeared completely.", excerpt: "...Are melted into air, into thin air.", modernExcerpt: "...have disappeared into the air, into thin air." },
+            { play: "Julius Caesar", phrase: "It's Greek to me", modern: "Something that is incomprehensible.", example: "This manual is Greek to me.", originalMeaning: "Casca says this about a speech he found unintelligible.", excerpt: "For my own part, it was Greek to me.", modernExcerpt: "As for me, I couldn't understand it..." },
+            { play: "Julius Caesar", phrase: "Made of sterner stuff", modern: "To be strong, tough, and resilient.", example: "He's not swayed by emotions; he's made of sterner stuff.", originalMeaning: "Mark Antony ironically uses this phrase to suggest Brutus is not as honorable as he claims.", excerpt: "And he is made of sterner stuff...", modernExcerpt: "...and he is made of tougher stuff." },
+            { play: "Hamlet", phrase: "In my heart of hearts", modern: "In one's deepest and most sincere feelings.", example: "In my heart of hearts, I know she's the one.", originalMeaning: "The most profound and secret part of one's being.", excerpt: "...in my heart of hearts...", modernExcerpt: "...in my deepest heart..." },
+            { play: "Hamlet", phrase: "Though this be madness, yet there is method in't", modern: "An action that appears irrational actually has a hidden purpose.", example: "There's a method to his madness.", originalMeaning: "Polonius suspects Hamlet is not truly insane but has a hidden agenda.", excerpt: "Though this be madness, yet there is method in't.", modernExcerpt: "Even though this seems like madness, there is a reason behind it." },
+            { play: "Hamlet", phrase: "To thine own self be true", modern: "To be honest and authentic to oneself.", example: "Don't follow the crowd; to thine own self be true.", originalMeaning: "Polonius's famous advice to his son Laertes.", excerpt: "This above all: to thine own self be true...", modernExcerpt: "Above all else, be honest with yourself..." },
+            { play: "Twelfth Night", phrase: "Laugh oneself into stitches", modern: "To laugh uncontrollably.", example: "That comedy show had me laughing myself into stitches.", originalMeaning: "Laughing so hard that your sides hurt, as if they are 'in stitches.'", excerpt: "...will laugh yourselves into stitches...", modernExcerpt: "...laugh so hard your sides hurt..." },
+            { play: "Much Ado About Nothing", phrase: "Lie low", modern: "To hide or stay out of public view.", example: "The police are looking for him, so he's lying low.", originalMeaning: "To keep a low profile after a conflict.", excerpt: "...some of us would lie low.", modernExcerpt: "...some of us would be in hiding." },
+            { play: "Love's Labour's Lost", phrase: "Naked truth", modern: "The plain, unvarnished truth.", example: "He told the judge the naked truth.", originalMeaning: "A story or idea being told without any lies or fanciful additions.", excerpt: "There's no naked truth in it...", modernExcerpt: "There is no plain truth in it..." },
+            { play: "The Comedy of Errors", phrase: "Neither rhyme nor reason", modern: "Lacking a logical explanation.", example: "His report had neither rhyme nor reason.", originalMeaning: "A lack of both poetic structure ('rhyme') and logical sense ('reason').", excerpt: "There's neither rhyme nor reason in it.", modernExcerpt: "There is no logic or sense to it." },
+            { play: "Cymbeline", phrase: "Not slept one wink", modern: "To have not slept at all.", example: "I haven't slept one wink.", originalMeaning: "A clear, literal expression of getting no sleep.", excerpt: "I have not slept one wink.", modernExcerpt: "I haven't slept a bit." },
+            { play: "Antony and Cleopatra", phrase: "Salad days", modern: "The time of one's youth and inexperience.", example: "He looks back on his salad days with fondness.", originalMeaning: "'Green' meant young or immature. Cleopatra is reflecting on her youth.", excerpt: "My salad days, / When I was green in judgment...", modernExcerpt: "My days of youth, when I was inexperienced..." },
+            { play: "Richard II", phrase: "Spotless reputation", modern: "A reputation that is without any flaws.", example: "She was known for her spotless reputation.", originalMeaning: "A good name that is free from any scandal or rumor.", excerpt: "...my spotless reputation.", modernExcerpt: "...my clean reputation." },
+            { play: "As You Like It", phrase: "Too much of a good thing", modern: "An excess of something pleasurable can become unpleasant.", example: "It was too much of a good thing.", originalMeaning: "An overabundance of even something enjoyable can be detrimental.", excerpt: "...Too much of a good thing.", modernExcerpt: "...Too much of a good thing." },
+            { play: "The Merry Wives of Windsor", phrase: "The world's mine oyster", modern: "The world is full of opportunities.", example: "She felt the world was her oyster.", originalMeaning: "The original phrasing had a more aggressive, forceful tone ('with sword will open').", excerpt: "...the world’s mine oyster...", modernExcerpt: "...the world is like an oyster that belongs to me..." }
+        ];
+
+        // --- SCRIPTORIUM POPULATION & ACCORDION ---
+        const scriptoriumContent = document.getElementById('scriptorium-content');
+        const groupedByPlay = phrasesData.reduce((acc, phrase) => {
+            acc[phrase.play] = acc[phrase.play] || [];
+            acc[phrase.play].push(phrase);
+            return acc;
+        }, {});
+
+        for (const play in groupedByPlay) {
+            const groupDiv = document.createElement('div');
+            const button = document.createElement('button');
+            button.className = 'accordion-button';
+            button.textContent = play;
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'accordion-content';
+            groupedByPlay[play].forEach(p => {
+                contentDiv.innerHTML += `
+                    <div class="phrase-scroll">
+                        <h3>${p.phrase}</h3>
+                        <ul>
+                            <li><strong>Modern Meaning:</strong> ${p.modern}</li>
+                            <li><strong>Example of Use:</strong> "${p.example}"</li>
+                        </ul>
+                        <strong>Director's Notes:</strong>
+                        <ul>
+                            <li><strong>Original Meaning:</strong> ${p.originalMeaning}</li>
+                            <li class="excerpt"><strong>Actual Excerpt:</strong> ${p.excerpt}</li>
+                            <li class="excerpt"><strong>Modern English:</strong> ${p.modernExcerpt}</li>
+                        </ul>
+                    </div>`;
+            });
+            groupDiv.appendChild(button);
+            groupDiv.appendChild(contentDiv);
+            scriptoriumContent.appendChild(groupDiv);
+        }
+        
+        scriptoriumContent.addEventListener('click', e => {
+            if (e.target.classList.contains('accordion-button')) {
+                e.target.classList.toggle('active');
+                const content = e.target.nextElementSibling;
+                content.style.maxHeight = content.style.maxHeight ? null : content.scrollHeight + "px";
+            }
+        });
+
+        // --- NAVIGATION LOGIC ---
+        document.body.addEventListener('click', e => {
+            const targetLink = e.target.closest('[data-target]');
+            if (targetLink) {
+                e.preventDefault();
+                const pageId = targetLink.getAttribute('data-target');
+                showPage(pageId);
+                if (pageId === 'quiz-page') {
+                    startQuiz(targetLink.dataset.mode);
+                }
+            }
+        });
+
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => page.classList.toggle('active', page.id === pageId));
+            window.scrollTo(0, 0);
+        }
+
+        // --- QUIZ LOGIC ---
+        const quizTitle = document.getElementById('quiz-title');
+        const timerDisplay = document.getElementById('timer-display');
+        const quizContent = document.getElementById('quiz-content');
+        const quizResults = document.getElementById('quiz-results');
+        const questionEl = document.getElementById('quiz-question');
+        const answersEl = document.getElementById('quiz-answers');
+        const feedbackEl = document.getElementById('quiz-feedback');
+        const resultsTitle = document.getElementById('results-title');
+        const resultsText = document.getElementById('results-text');
+        
+        let allQuestions = [];
+        let currentQuestions = [];
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let timer;
+        let timeLeft = 0;
+
+        function generateAllQuestions() {
+            allQuestions = [];
+            phrasesData.forEach(p => {
+                // Question type 1: phrase to meaning
+                allQuestions.push({
+                    text: `What is the meaning of "${p.phrase}"?`,
+                    correct: p.modern,
+                    type: 'modern'
+                });
+                // Question type 2: meaning to phrase
+                allQuestions.push({
+                    text: `Which phrase means "${p.modern}"?`,
+                    correct: p.phrase,
+                    type: 'phrase'
+                });
+            });
+        }
+
+        function startQuiz(mode) {
+            currentQuestionIndex = 0;
+            score = 0;
+            quizContent.classList.remove('hidden');
+            quizResults.classList.add('hidden');
+            
+            if (mode === 'rehearsal') {
+                quizTitle.textContent = 'Rehearsal';
+                timerDisplay.classList.add('hidden');
+                currentQuestions = shuffleArray([...allQuestions]).slice(0, 5);
+            } else if (mode === 'dressRehearsal') {
+                quizTitle.textContent = 'Dress Rehearsal';
+                timerDisplay.classList.add('hidden');
+                currentQuestions = shuffleArray([...allQuestions]);
+            } else if (mode === 'openingNight') {
+                quizTitle.textContent = 'Opening Night!';
+                timerDisplay.classList.remove('hidden');
+                currentQuestions = shuffleArray([...allQuestions]).slice(0, 20);
+                startTimer(90);
+            }
+            
+            loadQuestion(mode);
+        }
+
+        function loadQuestion(mode) {
+            feedbackEl.textContent = '';
+            const currentQuestion = currentQuestions[currentQuestionIndex];
+            const options = generateOptions(currentQuestion.correct, currentQuestion.type);
+            
+            questionEl.textContent = currentQuestion.text;
+            answersEl.innerHTML = '';
+            options.forEach(option => {
+                const button = document.createElement('button');
+                button.textContent = option;
+                button.className = 'action-button';
+                button.addEventListener('click', () => selectAnswer(option, currentQuestion.correct, button, mode));
+                answersEl.appendChild(button);
+            });
+        }
+        
+        function selectAnswer(selected, correct, btn, mode) {
+            stopTimer();
+            const buttons = answersEl.querySelectorAll('button');
+            buttons.forEach(button => button.disabled = true);
+
+            if (selected === correct) {
+                score++;
+                btn.style.backgroundColor = '#2E8B57';
+                feedbackEl.textContent = "Huzzah! Correct!";
+            } else {
+                btn.style.backgroundColor = '#DC143C';
+                const correctBtn = [...buttons].find(b => b.textContent === correct);
+                if (correctBtn) correctBtn.style.backgroundColor = '#2E8B57';
+                feedbackEl.textContent = `Alas! The correct answer was: "${correct}"`;
+            }
+
+            setTimeout(() => {
+                currentQuestionIndex++;
+                if (currentQuestionIndex < currentQuestions.length) {
+                    loadQuestion(mode);
+                    if (mode === 'openingNight' && timeLeft > 0) startTimer(timeLeft);
+                } else {
+                    endQuiz(mode);
+                }
+            }, 2000);
+        }
+        
+        function endQuiz(mode) {
+            stopTimer();
+            quizContent.classList.add('hidden');
+            quizResults.classList.remove('hidden');
+            let tier = 'unearned';
+
+            if (mode === 'rehearsal') {
+                resultsTitle.textContent = 'Rehearsal Complete!';
+                resultsText.textContent = `Thou hast answered ${score} of ${currentQuestions.length} correctly.`;
+                if (score === 5) tier = 'gold';
+                else if (score === 4) tier = 'silver';
+                else if (score >= 3) tier = 'bronze';
+                updateMedal('breakerOfIce', tier);
+            } else if (mode === 'dressRehearsal') {
+                const percentage = Math.round((score / currentQuestions.length) * 100);
+                resultsTitle.textContent = 'Dress Rehearsal Complete!';
+                resultsText.textContent = `Thou hast answered ${score} of ${currentQuestions.length} correctly (${percentage}%).`;
+                if (percentage >= 90) tier = 'gold';
+                else if (percentage >= 70) tier = 'silver';
+                else if (percentage >= 50) tier = 'bronze';
+                updateMedal('heartOfGold', tier);
+            } else if (mode === 'openingNight') {
+                const finalScore = score * 100 + timeLeft;
+                resultsTitle.textContent = 'The Curtain Falls!';
+                resultsText.textContent = `Thy final score is ${finalScore}! (${score} correct answers with ${timeLeft}s left).`;
+                if (finalScore >= 1500) tier = 'gold';
+                else if (finalScore >= 1000) tier = 'silver';
+                else if (finalScore >= 500) tier = 'bronze';
+                updateMedal('methodInMadness', tier);
+            }
+        }
+        
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function generateOptions(correctAnswer, type) {
+            let options = [correctAnswer];
+            let distractors = phrasesData.filter(p => p[type] !== correctAnswer);
+            distractors = shuffleArray(distractors).slice(0, 3);
+            distractors.forEach(d => options.push(d[type]));
+            return shuffleArray(options);
+        }
+
+        function startTimer(duration) {
+            timeLeft = duration;
+            timerDisplay.textContent = timeLeft;
+            timer = setInterval(() => {
+                timeLeft--;
+                timerDisplay.textContent = timeLeft;
+                if (timeLeft <= 0) {
+                    endQuiz('openingNight');
+                }
+            }, 1000);
+        }
+        function stopTimer() { clearInterval(timer); }
+
+        let medals = { breakerOfIce: 'unearned', heartOfGold: 'unearned', methodInMadness: 'unearned' };
+        const medalTiers = { unearned: 0, bronze: 1, silver: 2, gold: 3 };
+
+        function updateMedal(medalName, newTier) {
+            const currentTier = medals[medalName];
+            if (medalTiers[newTier] > medalTiers[currentTier]) {
+                medals[medalName] = newTier;
+                saveMedals();
+                renderMedals();
+            }
+        }
+
+        function renderMedals() {
+            for (const medalName in medals) {
+                const tier = medals[medalName];
+                const el = document.getElementById(medalName);
+                if (el) {
+                    el.className = 'medallion';
+                    if (tier !== 'unearned') {
+                        el.classList.add(tier);
+                    } else {
+                        el.classList.add('unearned');
+                    }
+                    el.querySelector('.medallion-tier').textContent = tier.charAt(0).toUpperCase() + tier.slice(1);
+                }
+            }
+        }
+
+        function saveMedals() { localStorage.setItem('shakeSpeakMedals', JSON.stringify(medals)); }
+        function loadMedals() {
+            const saved = localStorage.getItem('shakeSpeakMedals');
+            if (saved) medals = JSON.parse(saved);
+            renderMedals();
+        }
+
+        // Initialize App
+        generateAllQuestions();
+        loadMedals();
+    });
+    </script>
+</body>
+</html>

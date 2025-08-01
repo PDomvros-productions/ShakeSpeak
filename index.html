@@ -6,7 +6,7 @@
     <title>ShakeSpeak - The Complete App</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Caveat&family=Great+Vibes&family=Lato:wght@400;700&display=swap" rel="stylesheet">
     
     <style>
         /* --- General Setup & Variables --- */
@@ -74,6 +74,16 @@
         /* --- Intro & Hub Pages --- */
         #intro-page { background-color: var(--parchment); }
         #intro-page .container { text-align: center; }
+        
+        .app-title {
+            font-family: 'Lato', sans-serif;
+            font-weight: 700;
+            font-size: 4.5rem;
+            color: var(--burgundy);
+            margin-bottom: 0.5rem;
+            line-height: 1.1;
+        }
+
         .intro-image {
             width: 180px;
             height: 180px;
@@ -82,9 +92,9 @@
             margin-bottom: 1rem;
         }
         .letter {
-            font-family: 'Great Vibes', cursive;
-            font-size: 2rem;
-            line-height: 1.5;
+            font-family: 'Caveat', cursive;
+            font-size: 1.6rem;
+            line-height: 1.6;
             text-align: left;
             margin-bottom: 1rem;
         }
@@ -196,6 +206,7 @@
             .container { padding: 2rem; }
             .page-header h1 { font-size: 2rem; }
             .home-button { padding: 10px 20px; font-size: 1rem; }
+            .app-title { font-size: 6rem; }
             .intro-image { width: 250px; height: 250px; }
             .letter { font-size: 2.2rem; }
             .action-button, .nav-button { padding: 15px 30px; font-size: 1.2rem; }
@@ -210,11 +221,13 @@
 
     <div id="intro-page" class="page active">
         <div class="container">
+            <h1 class="app-title">ShakeSpeak</h1>
             <img src="2.jpg" alt="Shakespeare" class="intro-image">
             <div class="letter">
-                <p>Hark, aspiring player!</p>
-                <p>A greeting to thee. I am Will Shakespeare, and I welcome you to my famed Globe Theatre, where words weave worlds and stories take flight.</p>
-                <p>The play's the thing!</p>
+                <p>Hark, aspiring player! A greeting to thee.</p>
+                <p>I am Will Shakespeare, and I welcome you to my famed Globe Theatre. Within these walls, thou shalt find three paths to glory:</p>
+                <p>Prithee, first visit <strong>The Scriptorium</strong>, where thou canst learn the very phrases born of my quill. When thy mind is sharp, proceed to <strong>The Stage</strong> to test thy knowledge in a trial of wits. Excel, and thy triumphs shall be immortalised as gleaming medallions in <strong>The Gallery</strong>.</p>
+                <p>The play's the thing! Let us begin.</p>
                 <p class="signature">Your faithful servant,<br>William Shakespeare</p>
             </div>
             <p class="credit">Devised by Panagiotis Domvros, English and Drama Teacher</p>
